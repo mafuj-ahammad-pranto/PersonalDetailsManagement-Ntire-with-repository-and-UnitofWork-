@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using DataAccessLayer;  // Your actual DbContext
 using RepositoryLayer.Interfaces;
 using RepositoryLayer.Implementations;
+using BusinessLogicLayer.IService;
+using BusinessLogicLayer.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +23,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 // 4. Register Repository Pattern
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
+builder.Services.AddScoped<IPersolaDetails, PersolaDetails>();
 // 5. Add MVC
 builder.Services.AddControllersWithViews();
 
