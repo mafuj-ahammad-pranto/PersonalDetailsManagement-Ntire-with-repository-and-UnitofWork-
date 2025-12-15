@@ -14,5 +14,10 @@ namespace BusinessLogicLayer.IService
         Task AddPersonalDetailAsync(PersonalDetail personalDetail);
         Task UpdatePersonalDetailAsync(PersonalDetail personalDetail);
         Task DeletePersonalDetailAsync(int id);
+        Task AddAllAsync(
+        PersonalDetail personalDetail,
+        List<AcademicQualification> academicQualifications,
+        List<JobExperience> jobExperiences);
+        Task<PersonalDetail> GetByIdWithRelatedDataAsync(int id);
     }
 }

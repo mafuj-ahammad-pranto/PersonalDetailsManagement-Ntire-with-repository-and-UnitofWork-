@@ -17,13 +17,13 @@ namespace DataAccessLayer.Entities
 
         public string Designation { get; set; }
 
-        public DateTime FromDate { get; set; }
-        public DateTime ToDate { get; set; }
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
 
         public string Responsibilities { get; set; }
 
         // Foreign Key
-        public int PersonalDetailId { get; set; }
+        public int? PersonalDetailId { get; set; }
 
         // Navigation Property
         public PersonalDetail PersonalDetail { get; set; }

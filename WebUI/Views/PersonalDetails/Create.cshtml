@@ -1,0 +1,375 @@
+﻿@model WebUI.Models.PersonalDetailCreateVM
+
+@{
+    ViewData["Title"] = "Create Personal Detail";
+}
+
+<h2>Create Personal Detail</h2>
+
+<form asp-action="Create" method="post" id="mainForm">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <!-- Personal Information Section -->
+    <fieldset class="border p-3 mb-4">
+        <legend class="w-auto px-2">Personal Information</legend>
+
+        <div class="form-group">
+            <label asp-for="PersonalDetail.Name"></label>
+            <input asp-for="PersonalDetail.Name" class="form-control" />
+            <span asp-validation-for="PersonalDetail.Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="PersonalDetail.Email"></label>
+            <input asp-for="PersonalDetail.Email" class="form-control" type="email" />
+            <span asp-validation-for="PersonalDetail.Email" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="PersonalDetail.Phone"></label>
+            <input asp-for="PersonalDetail.Phone" class="form-control" />
+            <span asp-validation-for="PersonalDetail.Phone" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="PersonalDetail.Address"></label>
+            <textarea asp-for="PersonalDetail.Address" class="form-control" rows="2"></textarea>
+            <span asp-validation-for="PersonalDetail.Address" class="text-danger"></span>
+        </div>
+    </fieldset>
+
+    <!-- Academic Qualifications Section -->
+    <fieldset class="border p-3 mb-4">
+        <legend class="w-auto px-2">Academic Qualifications</legend>
+
+        <div id="academicQualifications">
+            <div class="academic-item border p-3 mb-3 bg-light">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Degree Name *</label>
+                            <input name="AcademicQualifications[0].DegreeName"
+                                   class="form-control"
+                                   required />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Institute Name *</label>
+                            <input name="AcademicQualifications[0].InstituteName"
+                                   class="form-control"
+                                   required />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Passing Year *</label>
+                            <input name="AcademicQualifications[0].PassingYear"
+                                   type="number"
+                                   class="form-control"
+                                   min="1950"
+                                   max="2100"
+                                   required />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Result/Grade *</label>
+                            <input name="AcademicQualifications[0].Result"
+                                   class="form-control"
+                                   required />
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button"
+                        class="btn btn-danger btn-sm remove-academic"
+                        style="display:none;">
+                    <i class="fas fa-trash"></i> Remove
+                </button>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-success btn-sm" id="addAcademic">
+            <i class="fas fa-plus"></i> Add Another Qualification
+        </button>
+    </fieldset>
+
+    <!-- Job Experiences Section -->
+    <fieldset class="border p-3 mb-4">
+        <legend class="w-auto px-2">Job Experiences</legend>
+
+        <div id="jobExperiences">
+            <div class="job-item border p-3 mb-3 bg-light">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Company Name *</label>
+                            <input name="JobExperiences[0].CompanyName"
+                                   class="form-control"
+                                   required />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Designation *</label>
+                            <input name="JobExperiences[0].Designation"
+                                   class="form-control"
+                                   required />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>From Date *</label>
+                            <input name="JobExperiences[0].FromDate"
+                                   type="date"
+                                   class="form-control"
+                                   required />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>To Date</label>
+                            <input name="JobExperiences[0].ToDate"
+                                   type="date"
+                                   class="form-control" />
+                            <small class="form-text text-muted">Leave blank if currently working</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Responsibilities</label>
+                    <textarea name="JobExperiences[0].Responsibilities"
+                              class="form-control"
+                              rows="3"></textarea>
+                </div>
+
+                <button type="button"
+                        class="btn btn-danger btn-sm remove-job"
+                        style="display:none;">
+                    <i class="fas fa-trash"></i> Remove
+                </button>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-success btn-sm" id="addJob">
+            <i class="fas fa-plus"></i> Add Another Experience
+        </button>
+    </fieldset>
+
+    <!-- Form Actions -->
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Save All
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-times"></i> Cancel
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        let academicCount = 1;
+        let jobCount = 1;
+
+        // Add Academic Qualification
+        document.getElementById('addAcademic').addEventListener('click', function() {
+            const container = document.getElementById('academicQualifications');
+            const newItem = document.createElement('div');
+            newItem.className = 'academic-item border p-3 mb-3 bg-light';
+            newItem.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Degree Name *</label>
+                            <input name="AcademicQualifications[${academicCount}].DegreeName"
+                                   class="form-control"
+                                   required />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Institute Name *</label>
+                            <input name="AcademicQualifications[${academicCount}].InstituteName"
+                                   class="form-control"
+                                   required />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Passing Year *</label>
+                            <input name="AcademicQualifications[${academicCount}].PassingYear"
+                                   type="number"
+                                   class="form-control"
+                                   min="1950"
+                                   max="2100"
+                                   required />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Result/Grade *</label>
+                            <input name="AcademicQualifications[${academicCount}].Result"
+                                   class="form-control"
+                                   required />
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-danger btn-sm remove-academic">
+                    <i class="fas fa-trash"></i> Remove
+                </button>
+            `;
+            container.appendChild(newItem);
+            academicCount++;
+            updateRemoveButtons();
+        });
+
+        // Add Job Experience
+        document.getElementById('addJob').addEventListener('click', function() {
+            const container = document.getElementById('jobExperiences');
+            const newItem = document.createElement('div');
+            newItem.className = 'job-item border p-3 mb-3 bg-light';
+            newItem.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Company Name *</label>
+                            <input name="JobExperiences[${jobCount}].CompanyName"
+                                   class="form-control"
+                                   required />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Designation *</label>
+                            <input name="JobExperiences[${jobCount}].Designation"
+                                   class="form-control"
+                                   required />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>From Date *</label>
+                            <input name="JobExperiences[${jobCount}].FromDate"
+                                   type="date"
+                                   class="form-control"
+                                   required />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>To Date</label>
+                            <input name="JobExperiences[${jobCount}].ToDate"
+                                   type="date"
+                                   class="form-control" />
+                            <small class="form-text text-muted">Leave blank if currently working</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Responsibilities</label>
+                    <textarea name="JobExperiences[${jobCount}].Responsibilities"
+                              class="form-control"
+                              rows="3"></textarea>
+                </div>
+                <button type="button" class="btn btn-danger btn-sm remove-job">
+                    <i class="fas fa-trash"></i> Remove
+                </button>
+            `;
+            container.appendChild(newItem);
+            jobCount++;
+            updateRemoveButtons();
+        });
+
+        // Remove Academic Qualification
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-academic') ||
+                e.target.closest('.remove-academic')) {
+                const btn = e.target.classList.contains('remove-academic') ?
+                    e.target : e.target.closest('.remove-academic');
+                btn.closest('.academic-item').remove();
+                reindexItems('academicQualifications', 'AcademicQualifications');
+                updateRemoveButtons();
+            }
+        });
+
+        // Remove Job Experience
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-job') ||
+                e.target.closest('.remove-job')) {
+                const btn = e.target.classList.contains('remove-job') ?
+                    e.target : e.target.closest('.remove-job');
+                btn.closest('.job-item').remove();
+                reindexItems('jobExperiences', 'JobExperiences');
+                updateRemoveButtons();
+            }
+        });
+
+        // Reindex items after removal to maintain proper array indices
+        function reindexItems(containerId, prefix) {
+            const container = document.getElementById(containerId);
+            const items = container.querySelectorAll(
+                containerId === 'academicQualifications' ? '.academic-item' : '.job-item'
+            );
+
+            items.forEach((item, index) => {
+                const inputs = item.querySelectorAll('input, textarea');
+                inputs.forEach(input => {
+                    const name = input.getAttribute('name');
+                    if (name && name.includes(prefix)) {
+                        const newName = name.replace(/\[\d+\]/, `[${index}]`);
+                        input.setAttribute('name', newName);
+                    }
+                });
+            });
+
+            // Update counter
+            if (prefix === 'AcademicQualifications') {
+                academicCount = items.length;
+            } else {
+                jobCount = items.length;
+            }
+        }
+
+        // Show/hide remove buttons (always show if more than 1 item)
+        function updateRemoveButtons() {
+            const academicItems = document.querySelectorAll('.academic-item');
+            const jobItems = document.querySelectorAll('.job-item');
+
+            academicItems.forEach(item => {
+                const removeBtn = item.querySelector('.remove-academic');
+                if (removeBtn) {
+                    removeBtn.style.display = academicItems.length > 1 ? 'inline-block' : 'none';
+                }
+            });
+
+            jobItems.forEach(item => {
+                const removeBtn = item.querySelector('.remove-job');
+                if (removeBtn) {
+                    removeBtn.style.display = jobItems.length > 1 ? 'inline-block' : 'none';
+                }
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateRemoveButtons();
+        });
+    </script>
+}

@@ -22,7 +22,7 @@ namespace DataAccessLayer.Entities
         public double Result { get; set; }  // GPA or CGPA
 
         // Foreign Key
-        public int PersonalDetailId { get; set; }
+        public int? PersonalDetailId { get; set; }
 
         // Navigation Property
         public PersonalDetail PersonalDetail { get; set; }
