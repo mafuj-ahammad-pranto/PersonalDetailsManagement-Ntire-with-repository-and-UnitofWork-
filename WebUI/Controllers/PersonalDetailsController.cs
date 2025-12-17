@@ -27,6 +27,7 @@ namespace WebUI.Controllers
         }
 
         [HttpPost]
+        [AutoValidateAntiforgeryToken]
         public async Task<IActionResult> Create(PersonalDetailCreateVM model)
         {
             // Remove ModelState errors for foreign keys and navigation properties
@@ -86,7 +87,55 @@ namespace WebUI.Controllers
 
             return View(personalDetail);
         }
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id) 
+        {
+            var personalDetail = await _personalDetailsService.GetByIdWithRelatedDataAsync(id);
 
+            return View(personalDetail);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, PersonalDetail model)
+        {
+            if (id != model.Id)
+            {
+                return NotFound();
+            }
+
+            // Remove ModelState errors for foreign keys and navigation properties
+            var keysToRemove = ModelState.Keys
+                .Where(k => k.Contains("PersonalDetailId") ||
+                            k.Contains("AcademicQualifications[") ||
+                            k.Contains("JobExperiences["))
+                .ToList();
+
+            foreach (var key in keysToRemove)
+            {
+                ModelState.Remove(key);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            try
+            {
+                await _personalDetailsService.UpdateAllAsync(
+                    model,
+                    model.AcademicQualifications?.ToList() ?? new List<AcademicQualification>(),
+                    model.JobExperiences?.ToList() ?? new List<JobExperience>());
+
+                TempData["Success"] = "Personal details updated successfully!";
+                return RedirectToAction(nameof(Details), new { id = model.Id });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "An error occurred while updating: " + ex.Message);
+                return View(model);
+            }
+        }
 
 
 

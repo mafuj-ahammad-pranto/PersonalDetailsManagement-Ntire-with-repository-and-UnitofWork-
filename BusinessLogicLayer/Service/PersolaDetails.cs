@@ -118,5 +118,99 @@ namespace BusinessLogicLayer.Service
             return personalDetail;
         }
 
+        public async Task UpdateAllAsync(
+    PersonalDetail personalDetail,
+    List<AcademicQualification> academics,
+    List<JobExperience> jobs)
+        {
+            try
+            {
+                // 1. Update PersonalDetail
+                _UnitOfWork.PersonalDetails.Update(personalDetail);
+                _UnitOfWork.Save();
+
+                // 2. Get existing related data from database
+                var existingAcademics = _UnitOfWork.AcademicQualifications
+                    .GetAll()
+                    .Where(a => a.PersonalDetailId == personalDetail.Id)
+                    .ToList();
+
+                var existingJobs = _UnitOfWork.JobExperiences
+                    .GetAll()
+                    .Where(j => j.PersonalDetailId == personalDetail.Id)
+                    .ToList();
+
+                // 3. Handle Academic Qualifications
+                // Delete removed items (items that exist in DB but not in the submitted list)
+                foreach (var existing in existingAcademics)
+                {
+                    if (!academics.Any(a => a.Id == existing.Id))
+                    {
+                        _UnitOfWork.AcademicQualifications.Delete(existing.Id);
+                    }
+                }
+
+                // Update or Insert Academic Qualifications
+                if (academics != null && academics.Any())
+                {
+                    foreach (var academic in academics)
+                    {
+                        academic.PersonalDetailId = personalDetail.Id;
+                        academic.PersonalDetail = null; // Clear navigation property
+
+                        if (academic.Id == 0)
+                        {
+                            // New record - Insert
+                            _UnitOfWork.AcademicQualifications.Insert(academic);
+                        }
+                        else
+                        {
+                            // Existing record - Update
+                            _UnitOfWork.AcademicQualifications.Update(academic);
+                        }
+                    }
+                }
+
+                // 4. Handle Job Experiences
+                // Delete removed items (items that exist in DB but not in the submitted list)
+                foreach (var existing in existingJobs)
+                {
+                    if (!jobs.Any(j => j.Id == existing.Id))
+                    {
+                        _UnitOfWork.JobExperiences.Delete(existing.Id);
+                    }
+                }
+
+                // Update or Insert Job Experiences
+                if (jobs != null && jobs.Any())
+                {
+                    foreach (var job in jobs)
+                    {
+                        job.PersonalDetailId = personalDetail.Id;
+                        job.PersonalDetail = null; // Clear navigation property
+
+                        if (job.Id == 0)
+                        {
+                            // New record - Insert
+                            _UnitOfWork.JobExperiences.Insert(job);
+                        }
+                        else
+                        {
+                            // Existing record - Update
+                            _UnitOfWork.JobExperiences.Update(job);
+                        }
+                    }
+                }
+
+                // 5. Save all changes
+                _UnitOfWork.Save();
+            }
+            catch (Exception ex)
+            {
+                // Log the error if you have logging
+                throw new Exception("Error updating personal details", ex);
+            }
+        }
+
     }
 }

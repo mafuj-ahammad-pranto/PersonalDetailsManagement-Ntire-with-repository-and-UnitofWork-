@@ -323,7 +323,7 @@
     <button onclick="window.print()" class="btn btn-print">
         <i class="fas fa-print"></i> Print CV
     </button>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+    <a asp-controller="PersonalDetails" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
         <i class="fas fa-edit"></i> Edit
     </a>
     <a asp-action="Index" class="btn btn-secondary">

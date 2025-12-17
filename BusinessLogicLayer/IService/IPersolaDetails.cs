@@ -19,5 +19,9 @@ namespace BusinessLogicLayer.IService
         List<AcademicQualification> academicQualifications,
         List<JobExperience> jobExperiences);
         Task<PersonalDetail> GetByIdWithRelatedDataAsync(int id);
+        Task UpdateAllAsync(
+    PersonalDetail personalDetail,
+    List<AcademicQualification> academics,
+    List<JobExperience> jobs);
     }
 }
