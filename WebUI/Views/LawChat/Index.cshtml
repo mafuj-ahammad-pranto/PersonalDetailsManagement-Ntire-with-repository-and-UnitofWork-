@@ -1,38 +1,93 @@
 ﻿@{
-    ViewData["Title"] = "Law Assistant";
+    ViewData["Title"] = "LexBot — Law Assistant";
 }
 
 <style>
-    .chat-container {
-        max-width: 860px;
+    .chat-wrapper {
+        max-width: 900px;
         margin: 0 auto;
     }
 
+    .chat-header {
+        background: linear-gradient(135deg, #004d26, #006633);
+        border-radius: 14px 14px 0 0;
+        padding: 20px 24px;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .chat-header-icon {
+        width: 52px;
+        height: 52px;
+        background: rgba(255,255,255,0.15);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        flex-shrink: 0;
+    }
+
+    .chat-header-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .chat-header-sub {
+        font-size: 0.8rem;
+        opacity: 0.8;
+        margin: 2px 0 0;
+    }
+
+    .online-dot {
+        width: 9px;
+        height: 9px;
+        background: #4cff91;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 5px;
+        animation: pulse 2s infinite;
+    }
+
+    @@keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.4;
+        }
+    }
+
     .chat-box {
-        height: 480px;
+        height: 460px;
         overflow-y: auto;
         border: 1px solid #dee2e6;
-        border-radius: 12px;
+        border-top: none;
         padding: 20px;
-        background: #f8f9fa;
+        background: #f8faf9;
         display: flex;
         flex-direction: column;
-        gap: 14px;
+        gap: 16px;
     }
 
     .message {
-        max-width: 78%;
+        max-width: 80%;
         padding: 12px 16px;
-        border-radius: 16px;
-        line-height: 1.5;
-        font-size: 0.95rem;
+        border-radius: 18px;
+        line-height: 1.55;
+        font-size: 0.92rem;
         white-space: pre-wrap;
         word-break: break-word;
+        position: relative;
     }
 
         .message.user {
             align-self: flex-end;
-            background: #0d6efd;
+            background: linear-gradient(135deg, #006633, #008844);
             color: white;
             border-bottom-right-radius: 4px;
         }
@@ -41,112 +96,184 @@
             align-self: flex-start;
             background: white;
             color: #212529;
-            border: 1px solid #dee2e6;
+            border: 1px solid #e0e0e0;
             border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
         }
 
         .message.typing {
             align-self: flex-start;
             background: white;
-            border: 1px solid #dee2e6;
+            border: 1px solid #e0e0e0;
             border-bottom-left-radius: 4px;
-            color: #6c757d;
+            color: #888;
             font-style: italic;
         }
 
-    .input-area {
-        margin-top: 16px;
+    .message-label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        margin-bottom: 4px;
+        opacity: 0.65;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .chat-footer {
+        border: 1px solid #dee2e6;
+        border-top: none;
+        border-radius: 0 0 14px 14px;
+        padding: 14px 16px;
+        background: white;
+    }
+
+    .quick-prompts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-bottom: 12px;
+    }
+
+    .quick-btn {
+        font-size: 0.78rem;
+        padding: 5px 13px;
+        border-radius: 20px;
+        border: 1.5px solid #006633;
+        color: #006633;
+        background: transparent;
+        cursor: pointer;
+        transition: all 0.15s;
+        white-space: nowrap;
+    }
+
+        .quick-btn:hover {
+            background: #006633;
+            color: white;
+        }
+
+    .input-row {
         display: flex;
         gap: 10px;
+        align-items: flex-end;
     }
 
     #userInput {
         flex: 1;
         border-radius: 24px;
         padding: 10px 18px;
-        border: 1px solid #ced4da;
-        font-size: 0.95rem;
-        outline: none;
+        border: 1.5px solid #ced4da;
+        font-size: 0.93rem;
         resize: none;
-        height: 48px;
+        height: 44px;
         overflow: hidden;
+        transition: border-color 0.2s;
     }
+
+        #userInput:focus {
+            outline: none;
+            border-color: #006633;
+            box-shadow: 0 0 0 3px rgba(0,102,51,0.12);
+        }
 
     #sendBtn {
-        border-radius: 24px;
-        padding: 0 24px;
-        font-weight: 500;
-    }
-
-    .header-badge {
-        background: linear-gradient(135deg, #1a237e, #283593);
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #006633, #004d26);
+        border: none;
         color: white;
-        border-radius: 14px;
-        padding: 18px 24px;
-        margin-bottom: 20px;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        flex-shrink: 0;
     }
 
-    .model-info {
-        font-size: 0.8rem;
-        color: rgba(255,255,255,0.75);
-        margin-top: 4px;
-    }
+        #sendBtn:hover {
+            transform: scale(1.08);
+        }
 
-    .quick-btn {
-        font-size: 0.8rem;
-        padding: 4px 12px;
-        border-radius: 16px;
-        white-space: nowrap;
+        #sendBtn:disabled {
+            opacity: 0.5;
+        }
+
+    .disclaimer {
+        font-size: 0.75rem;
+        color: #999;
+        margin-top: 10px;
+        text-align: center;
     }
 </style>
 
-<div class="chat-container mt-4">
-    <!-- Header -->
-    <div class="header-badge d-flex align-items-center gap-3">
-        <div style="font-size:2.2rem">⚖️</div>
+<div class="chat-wrapper">
+
+    <!-- Chat Header -->
+    <div class="chat-header">
+        <div class="chat-header-icon">⚖️</div>
         <div>
-            <h4 class="mb-0 fw-bold">Law Student Assistant</h4>
-            <div class="model-info">Powered by Ollama · Running locally on your machine</div>
+            <p class="chat-header-title">LexBot</p>
+            <p class="chat-header-sub">
+                <span class="online-dot"></span>Online &nbsp;·&nbsp;
+                Official AI Assistant · Department of Law, DIU
+            </p>
         </div>
     </div>
 
-    <!-- Quick prompts -->
-    <div class="d-flex flex-wrap gap-2 mb-3">
-        <button class="btn btn-outline-primary quick-btn" onclick="quickAsk('Explain the concept of mens rea in criminal law')">Mens Rea</button>
-        <button class="btn btn-outline-primary quick-btn" onclick="quickAsk('What is the difference between civil law and criminal law?')">Civil vs Criminal</button>
-        <button class="btn btn-outline-primary quick-btn" onclick="quickAsk('Explain the doctrine of precedent (stare decisis)')">Stare Decisis</button>
-        <button class="btn btn-outline-primary quick-btn" onclick="quickAsk('What are the elements of a valid contract?')">Contract Elements</button>
-        <button class="btn btn-outline-primary quick-btn" onclick="quickAsk('Explain habeas corpus')">Habeas Corpus</button>
-    </div>
-
-    <!-- Chat box -->
+    <!-- Chat Messages -->
     <div class="chat-box" id="chatBox">
-        <div class="message bot">
-            👋 Hello! I'm your Law Assistant. I can help you understand legal concepts, case law, statutes, and more. Ask me anything — whether it's constitutional law, torts, contracts, criminal law, or legal procedure. What would you like to learn today?
+        <div>
+            <div class="message-label" style="color:#006633;">LexBot</div>
+            <div class="message bot">
+                Assalamu Alaikum! 👋 I'm LexBot, the official AI assistant of the Department of Law at Daffodil International University (DIU).
+
+                I can help you with:
+                • Bangladesh Constitution, Penal Code, Evidence Act, Contract Act
+                • Legal concepts, case law, and legal procedures
+                • Exam preparation and assignment guidance
+                • General legal principles — criminal, civil, constitutional, and more
+
+                What would you like to learn today?
+            </div>
         </div>
     </div>
 
-    <!-- Input -->
-    <div class="input-area">
-        <textarea id="userInput" placeholder="Ask a legal question..." onkeydown="handleKey(event)"></textarea>
-        <button class="btn btn-primary" id="sendBtn" onclick="sendMessage()">Send</button>
-    </div>
-    <div class="text-muted mt-2" style="font-size:0.78rem">
-        ⚠️ This assistant is for educational purposes only and does not constitute legal advice.
+    <!-- Footer: quick prompts + input -->
+    <div class="chat-footer">
+        <div class="quick-prompts">
+            <button class="quick-btn" onclick="quickAsk('Explain Article 27 of the Constitution of Bangladesh')">Art. 27 Constitution</button>
+            <button class="quick-btn" onclick="quickAsk('What is mens rea in Bangladesh Penal Code?')">Mens Rea</button>
+            <button class="quick-btn" onclick="quickAsk('Explain the law of contract in Bangladesh')">Contract Law</button>
+            <button class="quick-btn" onclick="quickAsk('What is habeas corpus and how is it used in Bangladesh?')">Habeas Corpus</button>
+            <button class="quick-btn" onclick="quickAsk('Difference between civil and criminal law in Bangladesh')">Civil vs Criminal</button>
+            <button class="quick-btn" onclick="quickAsk('Explain the doctrine of stare decisis')">Stare Decisis</button>
+        </div>
+
+        <div class="input-row">
+            <textarea id="userInput" placeholder="Ask a legal question..." onkeydown="handleKey(event)"></textarea>
+            <button id="sendBtn" onclick="sendMessage()" title="Send">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+
+        <p class="disclaimer">
+            ⚠️ LexBot is for educational purposes only. Responses do not constitute legal advice.
+            For academic use — DIU Department of Law.
+        </p>
     </div>
 </div>
 
 @section Scripts {
     <script>
             const OLLAMA_URL = "http://localhost:11434/api/generate";
-            // Change this to the model you have pulled in Ollama, e.g. "llama3", "mistral", "gemma"
-            const MODEL_NAME = "llama3.2";
+            const MODEL_NAME = "llama3.2"; // Change to your pulled model name
 
-                    const SYSTEM_PROMPT = `You are LexBot, the official AI assistant of the Department of Law at Daffodil International University (DIU), Bangladesh.
+            const SYSTEM_PROMPT = `You are LexBot, the official AI assistant of the Department of Law at Daffodil International University (DIU), Bangladesh.
 
         You were built exclusively for DIU Law students and faculty. Your role is to:
         - Help DIU law students understand legal concepts, case law, and statutes
-        - Focus on Bangladesh law, including the Constitution of Bangladesh, Penal Code, Evidence Act, Contract Act, Family laws, and other relevant legislation
+        - Focus on Bangladesh law, including the Constitution of Bangladesh 1972, Penal Code 1860, Evidence Act 1872, Contract Act 1872, Family laws, and other relevant legislation
         - Also cover general legal principles: criminal law, civil law, contracts, torts, constitutional law, and legal procedure
         - Reference Bangladesh Supreme Court and High Court Division judgments where relevant
         - Help students prepare for their DIU law exams and assignments
@@ -154,7 +281,7 @@
 
         You only answer questions related to law and legal studies. If someone asks something unrelated to law, politely remind them that you are the DIU Department of Law assistant and can only help with legal topics.
 
-        Always sign off responses by reminding students they can visit the DIU Department of Law for further academic support.`;
+        End each response with a brief reminder that students can visit the DIU Department of Law for further academic support.`;
 
             let isGenerating = false;
 
@@ -170,27 +297,40 @@
                 sendMessage();
             }
 
-            function appendMessage(role, text) {
+            function appendMessage(role, text, label) {
                 const box = document.getElementById('chatBox');
+                const wrapper = document.createElement('div');
+
+                if (label) {
+                    const lbl = document.createElement('div');
+                    lbl.className = 'message-label';
+                    lbl.style.color = role === 'user' ? '#006633' : '#006633';
+                    lbl.style.textAlign = role === 'user' ? 'right' : 'left';
+                    lbl.textContent = label;
+                    wrapper.appendChild(lbl);
+                }
+
                 const div = document.createElement('div');
                 div.className = `message ${role}`;
                 div.textContent = text;
-                box.appendChild(div);
+                wrapper.appendChild(div);
+                wrapper.style.display = 'flex';
+                wrapper.style.flexDirection = 'column';
+                box.appendChild(wrapper);
                 box.scrollTop = box.scrollHeight;
                 return div;
             }
 
             async function sendMessage() {
                 if (isGenerating) return;
-
                 const input = document.getElementById('userInput');
                 const text = input.value.trim();
                 if (!text) return;
 
                 input.value = '';
-                appendMessage('user', text);
+                appendMessage('user', text, 'You');
 
-                const typingDiv = appendMessage('typing', '⚖️ Thinking...');
+                const typingDiv = appendMessage('typing', '⚖️ LexBot is thinking...', 'LexBot');
                 isGenerating = true;
                 document.getElementById('sendBtn').disabled = true;
 
@@ -219,10 +359,9 @@
                     while (true) {
                         const { done, value } = await reader.read();
                         if (done) break;
-
                         buffer += decoder.decode(value, { stream: true });
                         const lines = buffer.split('\n');
-                        buffer = lines.pop(); // Keep incomplete line
+                        buffer = lines.pop();
 
                         for (const line of lines) {
                             if (!line.trim()) continue;
@@ -232,13 +371,13 @@
                                     typingDiv.textContent += json.response;
                                     document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
                                 }
-                            } catch (e) { /* skip bad JSON */ }
+                            } catch (e) { }
                         }
                     }
 
                 } catch (err) {
                     typingDiv.className = 'message bot';
-                    typingDiv.textContent = `❌ Error: ${err.message}\n\nTips:\n• Make sure Ollama is running (ollama serve)\n• Make sure you have the model: ollama pull ${MODEL_NAME}\n• Check that port 11434 is accessible`;
+                    typingDiv.textContent = `❌ Error: ${err.message}\n\nTips:\n• Run: ollama serve\n• Run: ollama pull ${MODEL_NAME}\n• Make sure port 11434 is open`;
                 } finally {
                     isGenerating = false;
                     document.getElementById('sendBtn').disabled = false;
