@@ -2,9 +2,49 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    @if (ViewBag.UserName != null)
-    {
-        <h3>Welcome, @ViewBag.UserName</h3>
-    }
-</div>
+@if (ViewBag.UserName == null)
+{
+    <!-- Before Login -->
+    <div class="container text-center mt-5">
+
+        <img src="~/images/images.jfif"
+             alt="Department of Law Logo"
+             class="img-fluid mb-4"
+             style="max-width:220px;" />
+
+        <h1 class="fw-bold text-primary">
+            Welcome to the Department of Law AI Agent
+        </h1>
+
+        <p class="lead text-muted">
+            Your intelligent legal learning assistant for Bangladesh Law and the DIU Law Curriculum.
+        </p>
+
+    </div>
+}
+else
+{
+    <!-- After Login -->
+    <div class="container-fluid p-0">
+        <div class="position-relative">
+            <img src="~/images/faculty-banner.jpg"
+                 alt="DIU Campus"
+                 class="img-fluid w-100"
+                 style="max-height:400px; object-fit:cover;" />
+
+            <!-- Dark overlay -->
+            <div class="position-absolute top-0 start-0 w-100 h-100"
+                 style="background: rgba(0,0,0,0.45);"></div>
+
+            <!-- Text on top of overlay -->
+            <div class="position-absolute top-50 start-50 translate-middle text-center text-white" style="z-index:1;">
+                <h1 class="display-4 fw-bold" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">
+                    Welcome, @ViewBag.UserName
+                </h1>
+                <p class="fs-4" style="text-shadow: 1px 1px 6px rgba(0,0,0,0.7);">
+                    Department of Law AI Agent
+                </p>
+            </div>
+        </div>
+    </div>
+}
